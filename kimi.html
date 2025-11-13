@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贷款计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+
+        .section {
+            flex: 1;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+            color: #1e40af;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dbeafe;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .loan-type-item, .my-loan-item {
+            padding: 18px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .loan-type-item:hover, .my-loan-item:hover {
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            transform: translateY(-3px);
+        }
+
+        .loan-type-header, .loan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .rate-change-item {
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background-color: #f1f5f9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            margin: 50px auto;
+            padding: 35px;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 16px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px rgba(0,0,0,0.15);
+            border: 1px solid #bae6fd;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 32px;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: #1e40af;
+            transform: scale(1.1);
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #dbeafe;
+        }
+
+        .summary h3 {
+            color: #1e40af;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .summary p {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .payment-schedule {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .section-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #64748b;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #1e40af;
+            border-bottom-color: #3b82f6;
+        }
+
+        .tab:hover:not(.active) {
+            color: #3b82f6;
+            border-bottom-color: #93c5fd;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>贷款计算器</h1>
+            <p>支持组合贷、提前还款、利率变化计算</p>
+        </div>
+
+        <div class="main-content">
+            <!-- 贷款类型库 -->
+            <div class="section">
+                <h2>贷款类型库</h2>
+                <button class="btn-primary" onclick="showLoanTypeModal()">添加贷款类型</button>
+                <div id="loanTypeList"></div>
+            </div>
+
+            <!-- 我的贷款 -->
+            <div class="section">
+                <h2>我的贷款</h2>
+                <button class="btn-primary" onclick="showLoanModal()">添加贷款</button>
+                <div id="myLoanList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 贷款类型模态框 -->
+    <div id="loanTypeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoanTypeModal()">&times;</span>
+            <h2>添加贷款类型</h2>
+            <form id="loanTypeForm">
+                <div class="form-group">
+                    <label>类型名称</label>
+                    <input type="text" id="typeName" required>
+                </div>
+                <div class="form-group">
+                    <label>初始利率 (%)</label>
+                    <input type="number" id="initialRate" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>开始还款年月</label>
+                    <input type="month" id="startDate" required>
+                </div>
+                <div class="form-group">
+                    <label>还款月数</label>
+                    <input type="number" id="totalMonths" required>
+                </div>
+                <div class="form-group">
+                    <label>还款方式</label>
+                    <select id="repaymentType" required>
+                        <option value="equal_payment">等额本息</option>
+                        <option value="equal_principal">等额本金</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>利率变化</label>
+                    <div id="rateChanges"></div>
+                    <button type="button" class="btn-secondary" onclick="addRateChange()">添加利率变化</button>
+                </div>
+                <button type="submit" class="btn-primary">保存</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 贷款模态框 -->
+    <div id="loanModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoanModal()">&times;</span>
+            <h2>添加贷款</h2>
+            <form id="loanForm">
+                <div class="form-group">
+                    <label>贷款名称</label>
+                    <input type="text" id="loanName" required>
+                </div>
+                <div class="form-group">
+                    <label>总贷款金额 (万元)</label>
+                    <input type="number" id="totalAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>贷款类型组合</label>
+                    <div id="loanTypeCombinations"></div>
+                    <button type="button" class="btn-secondary" onclick="addLoanTypeCombination()">添加贷款类型</button>
+                </div>
+                <button type="submit" class="btn-primary">计算并保存</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 贷款详情模态框 -->
+    <div id="loanDetailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoanDetailModal()">&times;</span>
+            <h2 id="detailTitle">贷款详情</h2>
+            <div class="section-tabs">
+                <button class="tab active" onclick="showTab('summary')">计算摘要</button>
+                <button class="tab" onclick="showTab('schedule')">还款计划</button>
+                <button class="tab" onclick="showTab('prepayment')">提前还款</button>
+            </div>
+            <div id="summary" class="tab-content active"></div>
+            <div id="schedule" class="tab-content">
+                <div class="payment-schedule">
+                    <table id="paymentTable">
+                        <thead>
+                            <tr>
+                                <th>期数</th>
+                                <th>年月</th>
+                                <th>月还款额</th>
+                                <th>本金</th>
+                                <th>利息</th>
+                                <th>剩余本金</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="prepayment" class="tab-content">
+                <h3>提前还款计算</h3>
+                <div class="form-group">
+                    <label>提前还款时间</label>
+                    <input type="month" id="prepaymentDate">
+                </div>
+                <div class="form-group">
+                    <label>提前还款金额 (万元)</label>
+                    <input type="number" id="prepaymentAmount" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>提前还款方式</label>
+                    <select id="prepaymentType">
+                        <option value="reduce_term">缩短还款期限</option>
+                        <option value="reduce_payment">减少月还款额</option>
+                    </select>
+                </div>
+                <button class="btn-primary" onclick="calculatePrepayment()">计算提前还款</button>
+                <div id="prepaymentResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 数据存储
+        let loanTypes = [];
+        let myLoans = [];
+        let currentLoan = null;
+        let currentLoanTypeId = null;
+
+        // 核心计算逻辑（可替换为WASM）
+        class LoanCalculator {
+            // 等额本息计算
+            static calculateEqualPayment(principal, monthlyRate, months) {
+                if (monthlyRate === 0) {
+                    return {
+                        monthlyPayment: principal / months,
+                        totalInterest: 0,
+                        schedule: Array(months).fill(null).map((_, i) => ({
+                            month: i + 1,
+                            payment: principal / months,
+                            principal: principal / months,
+                            interest: 0,
+                            balance: principal - (principal / months) * (i + 1)
+                        }))
+                    };
+                }
+
+                const monthlyPayment = principal * monthlyRate * Math.pow(1 + monthlyRate, months) / 
+                                     (Math.pow(1 + monthlyRate, months) - 1);
+                const schedule = [];
+                let remainingPrincipal = principal;
+
+                for (let i = 0; i < months; i++) {
+                    const interestPayment = remainingPrincipal * monthlyRate;
+                    const principalPayment = monthlyPayment - interestPayment;
+                    remainingPrincipal -= principalPayment;
+
+                    schedule.push({
+                        month: i + 1,
+                        payment: monthlyPayment,
+                        principal: principalPayment,
+                        interest: interestPayment,
+                        balance: Math.max(0, remainingPrincipal)
+                    });
+                }
+
+                return {
+                    monthlyPayment,
+                    totalInterest: monthlyPayment * months - principal,
+                    schedule
+                };
+            }
+
+            // 等额本金计算
+            static calculateEqualPrincipal(principal, monthlyRate, months) {
+                const monthlyPrincipal = principal / months;
+                const schedule = [];
+                let remainingPrincipal = principal;
+                let totalInterest = 0;
+
+                for (let i = 0; i < months; i++) {
+                    const interestPayment = remainingPrincipal * monthlyRate;
+                    const monthlyPayment = monthlyPrincipal + interestPayment;
+                    remainingPrincipal -= monthlyPrincipal;
+                    totalInterest += interestPayment;
+
+                    schedule.push({
+                        month: i + 1,
+                        payment: monthlyPayment,
+                        principal: monthlyPrincipal,
+                        interest: interestPayment,
+                        balance: Math.max(0, remainingPrincipal)
+                    });
+                }
+
+                return {
+                    firstMonthPayment: schedule[0].payment,
+                    lastMonthPayment: schedule[schedule.length - 1].payment,
+                    totalInterest,
+                    schedule
+                };
+            }
+
+            // 计算组合贷款
+            static calculateCombinationLoan(loanCombinations) {
+                let allSchedules = [];
+                let totalPayment = 0;
+                let totalInterest = 0;
+                let maxMonths = 0;
+
+                // 计算每个贷款的还款计划
+                loanCombinations.forEach(combo => {
+                    const loanType = loanTypes.find(t => t.id === combo.loanTypeId);
+                    if (!loanType) return;
+
+                    const principal = combo.amount * 10000; // 转换为元
+                    const monthlyRate = loanType.initialRate / 100 / 12;
+                    
+                    let result;
+                    if (loanType.repaymentType === 'equal_payment') {
+                        result = this.calculateEqualPayment(principal, monthlyRate, loanType.totalMonths);
+                    } else {
+                        result = this.calculateEqualPrincipal(principal, monthlyRate, loanType.totalMonths);
+                    }
+
+                    // 应用利率变化
+                    result.schedule = this.applyRateChanges(result.schedule, loanType, principal);
+
+                    allSchedules.push({
+                        loanType: loanType.name,
+                        schedule: result.schedule,
+                        totalInterest: result.totalInterest || result.schedule.reduce((sum, item) => sum + item.interest, 0)
+                    });
+
+                    totalInterest += result.totalInterest || result.schedule.reduce((sum, item) => sum + item.interest, 0);
+                    maxMonths = Math.max(maxMonths, loanType.totalMonths);
+                });
+
+                // 合并还款计划（按月份）
+                const combinedSchedule = this.combineSchedules(allSchedules, maxMonths);
+
+                return {
+                    totalAmount: loanCombinations.reduce((sum, combo) => sum + combo.amount, 0),
+                    totalInterest: totalInterest / 10000, // 转换回万元
+                    totalPayment: (loanCombinations.reduce((sum, combo) => sum + combo.amount, 0) * 10000 + totalInterest) / 10000,
+                    schedule: combinedSchedule
+                };
+            }
+
+            // 应用利率变化
+            static applyRateChanges(schedule, loanType, principal) {
+                if (!loanType.rateChanges || loanType.rateChanges.length === 0) {
+                    return schedule;
+                }
+
+                const rateChanges = [...loanType.rateChanges].sort((a, b) => a.date.localeCompare(b.date));
+                let currentRate = loanType.initialRate / 100 / 12;
+                let rateChangeIndex = 0;
+                let remainingPrincipal = principal;
+
+                return schedule.map((item, index) => {
+                    const currentDate = this.addMonths(loanType.startDate, index);
+                    
+                    // 检查是否有利率变化
+                    while (rateChangeIndex < rateChanges.length && 
+                           currentDate >= rateChanges[rateChangeIndex].date) {
+                        currentRate = rateChanges[rateChangeIndex].newRate / 100 / 12;
+                        rateChangeIndex++;
+                    }
+
+                    // 重新计算利息和月还款额
+                    const interestPayment = remainingPrincipal * currentRate;
+                    let newItem = { ...item };
+
+                    if (loanType.repaymentType === 'equal_payment') {
+                        // 重新计算月还款额
+                        const remainingMonths = schedule.length - index;
+                        if (remainingMonths > 0) {
+                            const newMonthlyPayment = remainingPrincipal * currentRate * Math.pow(1 + currentRate, remainingMonths) / 
+                                                   (Math.pow(1 + currentRate, remainingMonths) - 1);
+                            newItem.payment = newMonthlyPayment;
+                            newItem.principal = newMonthlyPayment - interestPayment;
+                            newItem.interest = interestPayment;
+                        }
+                    } else {
+                        // 等额本金，利息变化，月还款额变化
+                        newItem.interest = interestPayment;
+                        newItem.payment = newItem.principal + interestPayment;
+                    }
+
+                    remainingPrincipal -= newItem.principal;
+                    newItem.balance = Math.max(0, remainingPrincipal);
+
+                    return newItem;
+                });
+            }
+
+            // 合并多个贷款的还款计划
+            static combineSchedules(allSchedules, maxMonths) {
+                const combined = [];
+
+                for (let month = 0; month < maxMonths; month++) {
+                    let totalPayment = 0;
+                    let totalPrincipal = 0;
+                    let totalInterest = 0;
+                    let totalBalance = 0;
+                    const paymentDate = this.addMonths(allSchedules[0].schedule[0].date || new Date(), month);
+
+                    allSchedules.forEach(loan => {
+                        if (month < loan.schedule.length) {
+                            const item = loan.schedule[month];
+                            totalPayment += item.payment;
+                            totalPrincipal += item.principal;
+                            totalInterest += item.interest;
+                            totalBalance += item.balance;
+                        }
+                    });
+
+                    combined.push({
+                        month: month + 1,
+                        date: paymentDate,
+                        payment: totalPayment,
+                        principal: totalPrincipal,
+                        interest: totalInterest,
+                        balance: totalBalance
+                    });
+                }
+
+                return combined;
+            }
+
+            // 提前还款计算
+            static calculatePrepayment(loan, prepaymentDate, prepaymentAmount, prepaymentType) {
+                // 这里简化处理，实际需要根据还款计划找到对应的期数
+                const prepaymentMonth = this.calculateMonthsDifference(loan.startDate, prepaymentDate);
+                const remainingPrincipal = loan.schedule[prepaymentMonth]?.balance || 0;
+                
+                if (prepaymentAmount >= remainingPrincipal) {
+                    return {
+                        success: true,
+                        message: '已结清贷款',
+                        newSchedule: loan.schedule.slice(0, prepaymentMonth + 1)
+                    };
+                }
+
+                // 根据提前还款方式重新计算
+                if (prepaymentType === 'reduce_term') {
+                    // 缩短还款期限
+                    const newPrincipal = remainingPrincipal - prepaymentAmount;
+                    const monthlyRate = loan.rate / 100 / 12;
+                    const monthlyPayment = loan.schedule[0].payment; // 保持原月还款额
+                    
+                    let newMonths = 0;
+                    let balance = newPrincipal;
+                    
+                    while (balance > 0 && newMonths < 360) { // 最多计算30年
+                        const interest = balance * monthlyRate;
+                        const principal = monthlyPayment - interest;
+                        balance -= principal;
+                        newMonths++;
+                    }
+
+                    return {
+                        success: true,
+                        message: `可缩短还款期限至${newMonths}个月`,
+                        savings: (loan.schedule.length - prepaymentMonth - newMonths) * monthlyPayment
+                    };
+                } else {
+                    // 减少月还款额
+                    const newPrincipal = remainingPrincipal - prepaymentAmount;
+                    const monthlyRate = loan.rate / 100 / 12;
+                    const remainingMonths = loan.schedule.length - prepaymentMonth - 1;
+                    
+                    const newMonthlyPayment = newPrincipal * monthlyRate * Math.pow(1 + monthlyRate, remainingMonths) / 
+                                           (Math.pow(1 + monthlyRate, remainingMonths) - 1);
+
+                    return {
+                        success: true,
+                        message: `新月还款额为${newMonthlyPayment.toFixed(2)}元`,
+                        savings: loan.schedule.slice(prepaymentMonth + 1).reduce((sum, item) => sum + item.payment, 0) - 
+                                newMonthlyPayment * remainingMonths
+                    };
+                }
+            }
+
+            // 工具方法
+            static addMonths(date, months) {
+                const d = new Date(date);
+                d.setMonth(d.getMonth() + months);
+                return d.toISOString().slice(0, 7);
+            }
+
+            static calculateMonthsDifference(startDate, endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                return (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+            }
+        }
+
+        // 页面加载初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            renderLoanTypes();
+            renderMyLoans();
+        });
+
+        // 数据持久化
+        function saveData() {
+            localStorage.setItem('loanTypes', JSON.stringify(loanTypes));
+            localStorage.setItem('myLoans', JSON.stringify(myLoans));
+        }
+
+        function loadData() {
+            const savedLoanTypes = localStorage.getItem('loanTypes');
+            const savedLoans = localStorage.getItem('myLoans');
+            
+            if (savedLoanTypes) {
+                loanTypes = JSON.parse(savedLoanTypes);
+            }
+            
+            if (savedLoans) {
+                myLoans = JSON.parse(savedLoans);
+            }
+        }
+
+        // 贷款类型管理
+        function showLoanTypeModal() {
+            document.getElementById('loanTypeModal').style.display = 'block';
+            currentLoanTypeId = null;
+            document.getElementById('loanTypeForm').reset();
+            document.getElementById('rateChanges').innerHTML = '';
+        }
+
+        function closeLoanTypeModal() {
+            document.getElementById('loanTypeModal').style.display = 'none';
+        }
+
+        function addRateChange() {
+            const rateChangeDiv = document.createElement('div');
+            rateChangeDiv.className = 'rate-change-item';
+            rateChangeDiv.innerHTML = `
+                <input type="month" placeholder="生效年月" required>
+                <input type="number" step="0.01" placeholder="新利率 (%)" required>
+                <button type="button" class="btn-danger" onclick="this.parentElement.remove()">删除</button>
+            `;
+            document.getElementById('rateChanges').appendChild(rateChangeDiv);
+        }
+
+        document.getElementById('loanTypeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const rateChanges = [];
+            document.querySelectorAll('#rateChanges .rate-change-item').forEach(item => {
+                const inputs = item.querySelectorAll('input');
+                if (inputs[0].value && inputs[1].value) {
+                    rateChanges.push({
+                        date: inputs[0].value,
+                        newRate: parseFloat(inputs[1].value)
+                    });
+                }
+            });
+
+            const loanType = {
+                id: currentLoanTypeId || Date.now().toString(),
+                name: document.getElementById('typeName').value,
+                initialRate: parseFloat(document.getElementById('initialRate').value),
+                startDate: document.getElementById('startDate').value,
+                totalMonths: parseInt(document.getElementById('totalMonths').value),
+                repaymentType: document.getElementById('repaymentType').value,
+                rateChanges: rateChanges
+            };
+
+            if (currentLoanTypeId) {
+                const index = loanTypes.findIndex(t => t.id === currentLoanTypeId);
+                loanTypes[index] = loanType;
+            } else {
+                loanTypes.push(loanType);
+            }
+
+            saveData();
+            renderLoanTypes();
+            closeLoanTypeModal();
+        });
+
+        function renderLoanTypes() {
+            const container = document.getElementById('loanTypeList');
+            container.innerHTML = '';
+
+            loanTypes.forEach(type => {
+                const div = document.createElement('div');
+                div.className = 'loan-type-item';
+                div.innerHTML = `
+                    <div class="loan-type-header">
+                        <h3>${type.name}</h3>
+                        <div>
+                            <button class="btn-secondary" onclick="editLoanType('${type.id}')">编辑</button>
+                            <button class="btn-danger" onclick="deleteLoanType('${type.id}')">删除</button>
+                        </div>
+                    </div>
+                    <p>初始利率: ${type.initialRate}%</p>
+                    <p>开始时间: ${type.startDate}</p>
+                    <p>还款月数: ${type.totalMonths}个月</p>
+                    <p>还款方式: ${type.repaymentType === 'equal_payment' ? '等额本息' : '等额本金'}</p>
+                    ${type.rateChanges.length > 0 ? `
+                        <p>利率变化:</p>
+                        <ul>
+                            ${type.rateChanges.map(change => `
+                                <li>${change.date} 起: ${change.newRate}%</li>
+                            `).join('')}
+                        </ul>
+                    ` : ''}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function editLoanType(id) {
+            const type = loanTypes.find(t => t.id === id);
+            if (!type) return;
+
+            currentLoanTypeId = id;
+            document.getElementById('typeName').value = type.name;
+            document.getElementById('initialRate').value = type.initialRate;
+            document.getElementById('startDate').value = type.startDate;
+            document.getElementById('totalMonths').value = type.totalMonths;
+            document.getElementById('repaymentType').value = type.repaymentType;
+
+            // 渲染利率变化
+            document.getElementById('rateChanges').innerHTML = '';
+            type.rateChanges.forEach(change => {
+                const rateChangeDiv = document.createElement('div');
+                rateChangeDiv.className = 'rate-change-item';
+                rateChangeDiv.innerHTML = `
+                    <input type="month" value="${change.date}" required>
+                    <input type="number" step="0.01" value="${change.newRate}" placeholder="新利率 (%)" required>
+                    <button type="button" class="btn-danger" onclick="this.parentElement.remove()">删除</button>
+                `;
+                document.getElementById('rateChanges').appendChild(rateChangeDiv);
+            });
+
+            document.getElementById('loanTypeModal').style.display = 'block';
+        }
+
+        function deleteLoanType(id) {
+            if (confirm('确定要删除这个贷款类型吗？')) {
+                loanTypes = loanTypes.filter(t => t.id !== id);
+                saveData();
+                renderLoanTypes();
+            }
+        }
+
+        // 我的贷款管理
+        function showLoanModal() {
+            document.getElementById('loanModal').style.display = 'block';
+            document.getElementById('loanForm').reset();
+            document.getElementById('loanTypeCombinations').innerHTML = '';
+        }
+
+        function closeLoanModal() {
+            document.getElementById('loanModal').style.display = 'none';
+        }
+
+        function addLoanTypeCombination() {
+            const comboDiv = document.createElement('div');
+            comboDiv.className = 'form-group';
+            comboDiv.innerHTML = `
+                <select required>
+                    <option value="">选择贷款类型</option>
+                    ${loanTypes.map(type => `<option value="${type.id}">${type.name}</option>`).join('')}
+                </select>
+                <input type="number" step="0.01" placeholder="金额 (万元)" required>
+                <button type="button" class="btn-danger" onclick="this.parentElement.remove()">删除</button>
+            `;
+            document.getElementById('loanTypeCombinations').appendChild(comboDiv);
+        }
+
+        document.getElementById('loanForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const combinations = [];
+            let totalAmount = 0;
+            
+            document.querySelectorAll('#loanTypeCombinations .form-group').forEach(group => {
+                const selects = group.querySelectorAll('select, input');
+                if (selects[0].value && selects[1].value) {
+                    const amount = parseFloat(selects[1].value);
+                    combinations.push({
+                        loanTypeId: selects[0].value,
+                        amount: amount
+                    });
+                    totalAmount += amount;
+                }
+            });
+
+            const inputTotalAmount = parseFloat(document.getElementById('totalAmount').value);
+            
+            if (Math.abs(totalAmount - inputTotalAmount) > 0.01) {
+                alert(`贷款类型金额总和 (${totalAmount}万元) 与总贷款金额 (${inputTotalAmount}万元) 不匹配！`);
+                return;
+            }
+
+            // 计算还款计划
+            const calculationResult = LoanCalculator.calculateCombinationLoan(combinations);
+            
+            const loan = {
+                id: Date.now().toString(),
+                name: document.getElementById('loanName').value,
+                totalAmount: inputTotalAmount,
+                combinations: combinations,
+                calculationResult: calculationResult,
+                createdDate: new Date().toISOString()
+            };
+
+            myLoans.push(loan);
+            saveData();
+            renderMyLoans();
+            closeLoanModal();
+        });
+
+        function renderMyLoans() {
+            const container = document.getElementById('myLoanList');
+            container.innerHTML = '';
+
+            myLoans.forEach(loan => {
+                const div = document.createElement('div');
+                div.className = 'my-loan-item';
+                div.innerHTML = `
+                    <div class="loan-header">
+                        <h3>${loan.name}</h3>
+                        <button class="btn-primary" onclick="showLoanDetail('${loan.id}')">查看详情</button>
+                    </div>
+                    <p>总贷款金额: ${loan.totalAmount}万元</p>
+                    <p>总利息支出: ${loan.calculationResult.totalInterest.toFixed(2)}万元</p>
+                    <p>还款总额: ${loan.calculationResult.totalPayment.toFixed(2)}万元</p>
+                    <p>组合贷款类型: ${loan.combinations.map(c => {
+                        const type = loanTypes.find(t => t.id === c.loanTypeId);
+                        return type ? type.name : '未知类型';
+                    }).join(', ')}</p>
+                    <p>创建时间: ${new Date(loan.createdDate).toLocaleDateString()}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 贷款详情
+        function showLoanDetail(loanId) {
+            currentLoan = myLoans.find(l => l.id === loanId);
+            if (!currentLoan) return;
+
+            document.getElementById('detailTitle').textContent = currentLoan.name + ' - 贷款详情';
+            document.getElementById('loanDetailModal').style.display = 'block';
+            
+            showSummary();
+            renderPaymentSchedule();
+        }
+
+        function closeLoanDetailModal() {
+            document.getElementById('loanDetailModal').style.display = 'none';
+        }
+
+        function showTab(tabName) {
+            // 隐藏所有标签页
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 显示选中的标签页
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'summary') {
+                showSummary();
+            } else if (tabName === 'schedule') {
+                renderPaymentSchedule();
+            }
+        }
+
+        function showSummary() {
+            const summary = document.getElementById('summary');
+            summary.innerHTML = `
+                <div class="summary">
+                    <h3>计算结果摘要</h3>
+                    <p>总贷款金额: ${currentLoan.totalAmount}万元</p>
+                    <p>总利息支出: ${currentLoan.calculationResult.totalInterest.toFixed(2)}万元</p>
+                    <p>还款总额: ${currentLoan.calculationResult.totalPayment.toFixed(2)}万元</p>
+                    <p>每月还款额: ${currentLoan.calculationResult.schedule[0]?.payment.toFixed(2)}元</p>
+                </div>
+            `;
+        }
+
+        function renderPaymentSchedule() {
+            const tbody = document.querySelector('#paymentTable tbody');
+            tbody.innerHTML = '';
+
+            currentLoan.calculationResult.schedule.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.month}</td>
+                    <td>${item.date}</td>
+                    <td>${item.payment.toFixed(2)}</td>
+                    <td>${item.principal.toFixed(2)}</td>
+                    <td>${item.interest.toFixed(2)}</td>
+                    <td>${item.balance.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function calculatePrepayment() {
+            const prepaymentDate = document.getElementById('prepaymentDate').value;
+            const prepaymentAmount = parseFloat(document.getElementById('prepaymentAmount').value) * 10000; // 转换为元
+            const prepaymentType = document.getElementById('prepaymentType').value;
+
+            if (!prepaymentDate || !prepaymentAmount) {
+                alert('请填写完整的提前还款信息！');
+                return;
+            }
+
+            const result = LoanCalculator.calculatePrepayment(currentLoan, prepaymentDate, prepaymentAmount, prepaymentType);
+            
+            const resultDiv = document.getElementById('prepaymentResult');
+            if (result.success) {
+                resultDiv.innerHTML = `
+                    <div class="summary">
+                        <h3>提前还款结果</h3>
+                        <p>${result.message}</p>
+                        ${result.savings ? `<p>节省金额: ${result.savings.toFixed(2)}元</p>` : ''}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
