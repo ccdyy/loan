@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>贷款计算器</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="container">
+            <!-- 第一列：贷款类型库 -->
+            <div class="column column-left">
+                <div class="column-header">
+                <h2>贷款类型库</h2>
+                    <button id="add-loan-type">➕ 添加</button>
+                </div>
+                <div class="column-content" id="loan-types-list">
+                    <!-- 贷款类型列表将动态生成 -->
+                </div>
+            </div>
+
+            <!-- 第二列：我的贷款 -->
+            <div class="column column-center">
+                <div class="column-header">
+                <h2>我的贷款</h2>
+                    <button id="add-my-loan">➕ 添加</button>
+                </div>
+                <div class="column-content" id="my-loans-list">
+                    <!-- 我的贷款列表将动态生成 -->
+                </div>
+            </div>
+
+            <!-- 第三列：还款计划 -->
+            <div class="column column-right">
+                <div class="column-header">
+                    <h2>还款计划</h2>
+                </div>
+                <div class="column-content" id="schedule-content">
+                    <div class="empty-state">请选择贷款查看还款计划</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 贷款类型编辑模态框 -->
+        <div id="loan-type-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="loan-type-modal-title">添加贷款类型</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <form id="loan-type-form">
+                    <input type="hidden" id="loan-type-id" />
+                    <div class="form-group">
+                        <label for="type-name">贷款类型名称：</label>
+                        <input type="text" id="type-name" required />
+                    </div>
+                    <div class="form-group">
+                    <h4>利率变化</h4>
+                    <p>仅维护利率变化，第一条视为初始利率</p>
+                    <div id="rate-changes-container">
+                        <div class="rate-change-item">
+                            <label>开始年月：</label>
+                            <input type="month" class="change-date" value="" />
+                            <label>新利率（%）：</label>
+                            <input
+                                type="number"
+                                class="change-rate"
+                                step="0.01"
+                                min="0"
+                                value="4.9"
+                            />
+                            <button
+                                type="button"
+                                class="secondary remove-rate-change"
+                            >
+                                删除
+                            </button>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        class="secondary"
+                        id="add-rate-change"
+                    >
+                        添加利率变化
+                    </button>
+
+                    <div class="action-buttons">
+                        <button type="button" class="secondary close-modal-btn">
+                            取消
+                        </button>
+                        <button type="submit">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 我的贷款编辑模态框 -->
+        <div id="my-loan-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="my-loan-modal-title">添加贷款</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <form id="my-loan-form">
+                    <input type="hidden" id="my-loan-id" />
+                    <div class="form-group">
+                        <label for="loan-name">贷款名称：</label>
+                        <input
+                            type="text"
+                            id="loan-name"
+                            required
+                            placeholder="例如：房贷、车贷"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="loan-total-amount"
+                            >总贷款金额（万元）：</label
+                        >
+                        <input
+                            type="number"
+                            id="loan-total-amount"
+                            step="0.01"
+                            min="0.01"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="loan-start-date">开始还款日期：</label>
+                        <input type="month" id="loan-start-date" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="loan-terms">贷款总期限（月）：</label>
+                        <input
+                            type="number"
+                            id="loan-terms"
+                            min="1"
+                            required
+                            value="360"
+                        />
+                    </div>
+
+                    <h4>贷款组合</h4>
+                    <p>
+                        从贷款类型库中选择组合的贷款类型，总金额需等于上面设置的总贷款金额
+                    </p>
+                    <div id="sub-loans-container">
+                        <div class="sub-loan-item">
+                            <div class="form-group">
+                                <label>选择贷款类型：</label>
+                                <select class="sub-loan-type">
+                                    <!-- 贷款类型将动态加载 -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>还款方式：</label>
+                                <select class="sub-loan-repay">
+                                    <option value="equal-principal-interest">等额本息</option>
+                                    <option value="equal-principal">等额本金</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>贷款金额（万元）：</label>
+                                <input
+                                    type="number"
+                                    class="sub-loan-amount"
+                                    step="0.01"
+                                    min="0.01"
+                                    value="10"
+                                />
+                            </div>
+                            <button
+                                type="button"
+                                class="secondary remove-sub-loan"
+                            >
+                                删除
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="secondary" id="add-sub-loan">
+                        添加贷款类型
+                    </button>
+                    <p id="sub-loan-total">当前总金额：10万元</p>
+
+                    <div class="action-buttons">
+                        <button type="button" class="secondary close-modal-btn">
+                            取消
+                        </button>
+                        <button type="submit">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 贷款详情页面 -->
+        <div id="loan-detail-page" class="detail-page">
+            <div class="detail-header">
+                <h2 id="loan-detail-title">贷款详情</h2>
+                <button type="button" class="secondary" id="close-detail-page">关闭</button>
+                </div>
+            <div class="detail-content" id="loan-detail-content">
+                    <!-- 贷款详情将动态生成 -->
+            </div>
+        </div>
+
+        <script src="app.js"></script>
+    </body>
+</html>
