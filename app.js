@@ -184,15 +184,6 @@ function setupEventListeners() {
       const button = target.closest("button");
       if (!button) return;
 
-      // 查看详情按钮
-      if (button.classList.contains("btn-loan-type-view-detail")) {
-        e.preventDefault();
-        e.stopPropagation();
-        const id = parseInt(button.getAttribute("data-id"));
-        if (id) toggleLoanTypeDetail(id);
-        return;
-      }
-
       // 编辑按钮
       if (button.classList.contains("btn-loan-type-edit")) {
         e.preventDefault();
@@ -241,15 +232,6 @@ function setupEventListeners() {
       // 查找最近的按钮元素（因为点击的可能是按钮内的文本节点）
       const button = target.closest("button");
       if (!button) return;
-
-      // 查看详情按钮
-      if (button.classList.contains("btn-my-loan-view-detail")) {
-        e.preventDefault();
-        e.stopPropagation();
-        const id = parseInt(button.getAttribute("data-id"));
-        if (id) toggleMyLoanDetail(id);
-        return;
-      }
 
       // 查看计划按钮
       if (button.classList.contains("btn-my-loan-view-schedule")) {
@@ -502,7 +484,6 @@ function renderLoanTypes() {
                     <div class="list-item-header">
                         <div class="list-item-title">${type.name}</div>
                         <div class="list-item-actions">
-                            <button class="secondary btn-loan-type-view-detail" data-id="${type.id}">查看详情</button>
                             <button class="secondary btn-loan-type-edit" data-id="${type.id}">编辑</button>
                             <button class="delete btn-loan-type-delete" data-id="${type.id}">删除</button>
                         </div>
@@ -589,7 +570,6 @@ function renderMyLoans() {
                     <div class="list-item-header">
                         <div class="list-item-title">${loan.name}</div>
                         <div class="list-item-actions">
-                            <button class="secondary btn-my-loan-view-detail" data-id="${loan.id}">查看详情</button>
                             <button class="secondary btn-my-loan-view-schedule" data-id="${loan.id}">查看计划</button>
                             <button class="secondary btn-my-loan-edit" data-id="${loan.id}">编辑</button>
                             <button class="delete btn-my-loan-delete" data-id="${loan.id}">删除</button>

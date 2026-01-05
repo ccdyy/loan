@@ -32,10 +32,11 @@ body {
 
 .container {
     display: grid;
-    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-columns: 1fr 2fr;
     gap: 20px;
     max-width: 1600px;
     margin: 0 auto 20px;
+    height: 90vh;
 }
 
 .column {
@@ -45,8 +46,14 @@ body {
     box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
-    height: 90vh;
     overflow: hidden;
+}
+
+.column-left {
+    display: grid;
+    /* 将左侧列分成上下两行，比例为 1:1 */
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
 }
 
 .column-header {
